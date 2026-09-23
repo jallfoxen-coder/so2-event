@@ -29,8 +29,11 @@
       document.body.innerHTML = "<p>Ты участвуешь! Напиши слово СТЕНДОФФ в канал.</p>";
     })
     .catch(function(err) {
-      document.body.innerHTML = "<p>Ошибка: " + err + "</p>";
-    });
+  var msg = err && err.error_data ? JSON.stringify(err.error_data)
+          : err && err.error_msg  ? err.error_msg
+          : JSON.stringify(err);
+  document.body.innerHTML = "<pre>Ошибка: " + msg + "</pre>";
+});
   </script>
 </body>
 </html>
