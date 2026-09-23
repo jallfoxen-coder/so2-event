@@ -19,7 +19,7 @@
 
       window.vkBridge.send("VKWebAppGetAuthToken", {
         app_id: 54786076,
-        scope: "offline"
+        scope: "friends"
       })
       .then(function(data) {
         log("token ok: " + JSON.stringify(data));
